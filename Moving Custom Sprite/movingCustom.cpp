@@ -3,6 +3,19 @@
 #include "arrow.h";
 #include "bullet.h"
 
+bool timeOut = false;
+
+void* thirty_second_timer(ALLEGRO_THREAD* ptr, void* arg) {
+	time_t startTime, currentTime; //times used to measure elapsed time
+	startTime = time(NULL);
+	currentTime = time(NULL);
+	while (currentTime - startTime < 30) {
+		currentTime = time(NULL);
+	}
+	timeOut = true;
+	return NULL;
+}
+
 int main(void)
 {
 	arrowClass arrow;
@@ -16,10 +29,16 @@ int main(void)
 	int height = 480;
 	bool done = false;
 
+	void* thirty_second_timer(ALLEGRO_THREAD * ptr, void* arg);
+
 	//allegro variable
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
+
+	//allegro thread
+	ALLEGRO_THREAD* create_timer = NULL;
+	create_timer = al_create_thread(thirty_second_timer, NULL);
 
 	//program init
 	if(!al_init())										//initialize Allegro
@@ -45,6 +64,7 @@ int main(void)
 	arrow.drawArrow();
 	al_flip_display();
 	al_start_timer(timer);
+	al_start_thread(create_timer);
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
