@@ -37,8 +37,8 @@ int main(void)
 	ALLEGRO_TIMER *timer = NULL;
 
 	//allegro thread
-	ALLEGRO_THREAD* create_timer = NULL;
-	create_timer = al_create_thread(thirty_second_timer, NULL);
+	ALLEGRO_THREAD* timer30s = NULL;
+	timer30s = al_create_thread(thirty_second_timer, NULL);
 
 	//program init
 	if(!al_init())										//initialize Allegro
@@ -64,7 +64,7 @@ int main(void)
 	arrow.drawArrow();
 	al_flip_display();
 	al_start_timer(timer);
-	al_start_thread(create_timer);
+	al_start_thread(timer30s);
 	while(!done)
 	{
 		ALLEGRO_EVENT ev;
@@ -124,6 +124,7 @@ int main(void)
 	}
 	al_destroy_event_queue(event_queue);
 	al_destroy_timer(timer);
+	al_destroy_thread(timer30s);
 	al_destroy_display(display);						//destroy our display object
 	system("pause");
 	return 0;
