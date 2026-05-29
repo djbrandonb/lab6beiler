@@ -1,4 +1,6 @@
 #include <allegro5\allegro.h>
+#include <allegro5\allegro_font.h>
+#include <allegro5\allegro_ttf.h>
 #include <allegro5\allegro_primitives.h>
 #include "arrow.h";
 #include "bullet.h"
@@ -26,7 +28,7 @@ int main(void)
 
 	//variables
 	int width = 640;
-	int height = 480;
+	int height = 520;
 	bool done = false;
 
 	void* thirty_second_timer(ALLEGRO_THREAD * ptr, void* arg);
@@ -35,10 +37,11 @@ int main(void)
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
+	ALLEGRO_THREAD *timer30s = NULL;
+	ALLEGRO_FONT *font = NULL;
 
-	//allegro thread
-	ALLEGRO_THREAD* timer30s = NULL;
 	timer30s = al_create_thread(thirty_second_timer, NULL);
+	font = al_load_ttf_font("arial.ttf", 24, 0);
 
 	//program init
 	if(!al_init())										//initialize Allegro
@@ -53,8 +56,8 @@ int main(void)
 	al_install_keyboard();
 	al_init_primitives_addon();
 	arrow.create_arrow_bitmap(display);
-
-
+	
+	
 	al_set_target_bitmap(al_get_backbuffer(display));
 	event_queue = al_create_event_queue();
 	timer = al_create_timer(1.0 / FPS);
@@ -111,13 +114,13 @@ int main(void)
 
 			if (arrow.getSpeed()!=0){
 				arrow.erase_arrow();
-				arrow.move_arrow(width,height);
+				arrow.move_arrow(width,480);
 			}
 			arrow.drawArrow();
 			for(int i=0;i<10;i++)
 			{
 				mybullet[i].erase_bullet();
-				score+=mybullet[i].move_bullet(arrow.getX(),arrow.getY(),32,32,height);
+				score+=mybullet[i].move_bullet(arrow.getX(),arrow.getY(),32,32,480);
 			}
 		}
 		al_flip_display();
@@ -126,6 +129,7 @@ int main(void)
 	al_destroy_timer(timer);
 	al_destroy_thread(timer30s);
 	al_destroy_display(display);						//destroy our display object
+	al_destroy_font(font);
 	system("pause");
 	return 0;
 }
